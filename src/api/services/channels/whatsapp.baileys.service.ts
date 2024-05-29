@@ -1227,11 +1227,6 @@ export class BaileysStartupService extends ChannelStartupService {
               },
             },
           );
-          this.logger.verbose({
-            provider: provider.instance.chatwoot,
-            chatMessage: messageRaw,
-            hasAssign: !assignee,
-          });
 
           const typebotSessionRemoteJid = this.localTypebot.sessions?.find(
             (session) => session.remoteJid === received.key.remoteJid,
