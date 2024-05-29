@@ -444,8 +444,7 @@ export class ChatwootService {
     const searchableFields = this.getSearchableFields();
 
     // eslint-disable-next-line prettier/prettier
-    if(contacts.length === 2 && this.getClientCwConfig().merge_brazil_contacts && query.startsWith('+55')){
-
+    if (contacts.length === 2 && this.getClientCwConfig().merge_brazil_contacts && query.startsWith('+55')) {
       const contact = this.mergeBrazilianContacts(contacts);
       if (contact) {
         return contact;

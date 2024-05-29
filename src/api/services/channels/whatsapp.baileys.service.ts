@@ -1211,13 +1211,35 @@ export class BaileysStartupService extends ChannelStartupService {
             }
           }
 
+          const provider = await waMonitor.instanceInfo(this.instance.name);
+
+          const {
+            data: {
+              meta: { assignee },
+            },
+          } = await axios.get(
+            `${provider.instance.chatwoot.url}/api/v1/accounts/${Number(
+              provider.instance.chatwoot.account_id,
+            )}/conversations/${messageRaw.chatwoot.conversationId}`,
+            {
+              headers: {
+                api_access_token: provider.instance.chatwoot.token,
+              },
+            },
+          );
+          this.logger.verbose({
+            provider: provider.instance.chatwoot,
+            chatMessage: messageRaw,
+            hasAssign: !assignee,
+          });
+
           const typebotSessionRemoteJid = this.localTypebot.sessions?.find(
             (session) => session.remoteJid === received.key.remoteJid,
           );
 
           if ((this.localTypebot.enabled && type === 'notify') || typebotSessionRemoteJid) {
             if (!(this.localTypebot.listening_from_me === false && messageRaw.key.fromMe === true)) {
-              if (messageRaw.messageType !== 'reactionMessage')
+              if (messageRaw.messageType !== 'reactionMessage' && !assignee)
                 await this.typebotService.sendTypebot(
                   { instanceName: this.instance.name },
                   messageRaw.key.remoteJid,

@@ -516,7 +516,11 @@ export class TypebotService {
       let text = '';
 
       if (element.text) {
-        text += element.text;
+        if (element.text === 'Invalid message. Please, try again.') {
+          text += applyFormatting({ text: 'Por favor, selecione uma opção válida' });
+        } else {
+          text += element.text;
+        }
       }
 
       if (
@@ -637,6 +641,29 @@ export class TypebotService {
 
           for (const item of items) {
             formattedText += `▶️ ${item.content}\n`;
+          }
+
+          formattedText = formattedText.replace(/\n$/, '');
+
+          await instance.textMessage({
+            number: remoteJid.split('@')[0],
+            options: {
+              delay: instance.localTypebot.delay_message || 1000,
+              presence: 'composing',
+            },
+            textMessage: {
+              text: formattedText,
+            },
+          });
+        }
+
+        if (input.type === 'picture choice input') {
+          let formattedText = '';
+
+          const items = input.items;
+
+          for (const item of items) {
+            formattedText += `▶️ ${item.title}\n`;
           }
 
           formattedText = formattedText.replace(/\n$/, '');
