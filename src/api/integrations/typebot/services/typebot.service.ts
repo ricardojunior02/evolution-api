@@ -671,6 +671,27 @@ export class TypebotService {
           });
         }
 
+        if (input.type === 'file input') {
+          let formattedText = 'Poderia nos enviar o anexo como solicitado acima';
+
+          if (!input.options?.isRequired) {
+            formattedText += '\n▶️ Pular etapa';
+          }
+
+          formattedText = formattedText.replace(/\n$/, '');
+
+          await instance.textMessage({
+            number: remoteJid.split('@')[0],
+            options: {
+              delay: instance.localTypebot.delay_message || 1000,
+              presence: 'composing',
+            },
+            textMessage: {
+              text: formattedText,
+            },
+          });
+        }
+
         if (input.type === 'picture choice input') {
           let formattedText = '';
 
@@ -788,9 +809,12 @@ export class TypebotService {
               let reqData: {};
               if (version === 'latest') {
                 urlTypebot = `${url}/api/v1/sessions/${data.sessionId}/continueChat`;
-                reqData = {
-                  message: content,
-                };
+                reqData =
+                  content === 'Pular etapa'
+                    ? {}
+                    : {
+                        message: content,
+                      };
               } else {
                 urlTypebot = `${url}/api/v1/sendMessage`;
                 reqData = {
@@ -888,9 +912,12 @@ export class TypebotService {
             let reqData: {};
             if (version === 'latest') {
               urlTypebot = `${url}/api/v1/sessions/${data.sessionId}/continueChat`;
-              reqData = {
-                message: content,
-              };
+              reqData =
+                content === 'Pular etapa'
+                  ? {}
+                  : {
+                      message: content,
+                    };
             } else {
               urlTypebot = `${url}/api/v1/sendMessage`;
               reqData = {
@@ -978,9 +1005,16 @@ export class TypebotService {
       let reqData: {};
       if (version === 'latest') {
         urlTypebot = `${url}/api/v1/sessions/${session.sessionId.split('-')[1]}/continueChat`;
-        reqData = {
-          message: content,
-        };
+
+        const urlContent = msg.message as any;
+
+        const urlOrContent = messageType === 'documentMessage' ? urlContent?.documentMessage?.url : content;
+        reqData =
+          content === 'Pular etapa'
+            ? {}
+            : {
+                message: urlOrContent,
+              };
       } else {
         urlTypebot = `${url}/api/v1/sendMessage`;
         reqData = {
