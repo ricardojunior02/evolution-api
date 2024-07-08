@@ -428,6 +428,7 @@ export class TypebotService {
             remoteJid: data.remoteJid,
             pushName: data.pushName || data.prefilledVariables?.pushName || '',
             instanceName: instance.instanceName,
+            message: data.message ? data.message : '',
           },
         };
       } else {
@@ -441,6 +442,7 @@ export class TypebotService {
               remoteJid: data.remoteJid,
               pushName: data.pushName || data.prefilledVariables?.pushName || '',
               instanceName: instance.instanceName,
+              message: data.message ? data.message : '',
             },
           },
         };
@@ -740,6 +742,7 @@ export class TypebotService {
     const unknown_message = findTypebot.unknown_message;
     const listening_from_me = findTypebot.listening_from_me;
     const messageType = this.getTypeMessage(msg.message).messageType;
+    const contentContent = this.getConversationMessage(msg.message);
 
     const session = sessions.find((session) => session.remoteJid === remoteJid);
 
@@ -753,7 +756,6 @@ export class TypebotService {
 
         if (diffInMinutes > expire) {
           const newSessions = await this.clearSessions(instance, remoteJid);
-
           const data = await this.createNewSession(instance, {
             enabled: findTypebot.enabled,
             url: url,
@@ -766,6 +768,7 @@ export class TypebotService {
             sessions: newSessions,
             remoteJid: remoteJid,
             pushName: msg.pushName,
+            message: contentContent,
           });
 
           await this.sendWAMessage(instance, remoteJid, data.messages, data.input, data.clientSideActions);
@@ -865,6 +868,7 @@ export class TypebotService {
           sessions: sessions,
           remoteJid: remoteJid,
           pushName: msg.pushName,
+          message: contentContent,
           prefilledVariables: {
             messageType: messageType,
           },

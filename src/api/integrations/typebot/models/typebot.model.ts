@@ -3,6 +3,7 @@ import { Schema } from 'mongoose';
 import { dbserver } from '../../../../libs/db.connect';
 
 class Session {
+  message?: string;
   remoteJid?: string;
   sessionId?: string;
   status?: string;
