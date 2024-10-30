@@ -598,7 +598,7 @@ export class ChatwootService {
 
       this.logger.verbose('find or create contact in chatwoot');
 
-      const picture_url = await this.waMonitor.waInstances[instance.instanceName].profilePicture(chatId);
+      const picture_url = { profilePictureUrl: '' }; // await this.waMonitor.waInstances[instance.instanceName].profilePicture(chatId);
 
       let contact = await this.findContact(instance, chatId);
 
